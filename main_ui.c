@@ -1,7 +1,8 @@
 #include<stdio.h>
 #include<ctype.h>
 #include<string.h>
-#include"functions.c" //file contains usefull functions needed in program 
+#include"functions.h"
+#include"todo_manager.h"
 
 
 int displayUi(){
@@ -18,8 +19,7 @@ int main(int argc , char* argv[]){
     if(argc < 2){
         switch(displayUi()){
             case 1:
-                //todoList();
-                printf("TodoList");
+                todoManager();
                 break;
             case 2:
                 // noteKeeper();
