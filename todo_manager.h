@@ -14,3 +14,5 @@ void listTodos(Todos*);
 void addTodo(Todos* , int);
 void deleteTodo(Todos*);
 void setReminder(Todos *todo);
+void sortTodos(Todos* todo, int length, int mode);
+int compareDates(time_t date1, time_t date2);

@@ -46,7 +46,7 @@ void readTodo(Todos* todo){
     displayTodo(todo);
 }
 void displayTodo(Todos *todo){
-
+    int sortMode;
     char action;
     system("clear");
     listTodos(todo);
@@ -54,8 +54,10 @@ void displayTodo(Todos *todo){
     if(nTodos>0){
         printf("Press R to set/remove a reminder\n");
         printf("Press V to delete a Todo\n");
+        printf("Press S to sort  Todos\n");
     }
-        
+    printf("Press M to go to main menu\n");    
+
     scanf(" %c",&action);
     getchar();
     switch(action){
@@ -67,7 +69,18 @@ void displayTodo(Todos *todo){
                   break;
         case 'R':          
         case 'r': setReminder(todo);
-                  break;                        
+                  break; 
+        case 'S':          
+        case 's': 
+                    printf("1) Sort by Priority\n");
+                    printf("2) Sort by Date\n");
+                    scanf("%d", &sortMode);
+                    if(sortMode == 1 ) sortTodos(todo , nTodos , 0 );
+                    else if (sortMode == 2) sortTodos(todo, nTodos, 1);
+                    break;            
+        case 'M':          
+        case 'm': main_menu();
+                  break;                       
         default : printf("Invalid Command");          
     }
 }
@@ -159,4 +172,36 @@ void setReminder(Todos *todo){
     
     clearConsole();  
     displayTodo(todo);
-}    
+}   
+
+void sortTodos(Todos* todo, int length, int mode)
+{
+    for (int i = 0; i < length - 1; i++)
+    {
+        for (int j = 0; j < length - i - 1; j++)
+        {
+            if ( (mode == 0 && todo[j].priority < todo[j + 1].priority) ||
+                (mode == 1 && compareDates(todo[j].modifiedTime, todo[j + 1].modifiedTime)) )
+            {
+                // Swap todo[j] and todo[j+1]
+                Todos temp = todo[j];
+                todo[j] = todo[j + 1];
+                todo[j + 1] = temp;
+            }
+        }
+    }
+    displayTodo(todo);
+}
+
+int compareDates(time_t date1, time_t date2)
+{
+    double diff = difftime(date1, date2);
+    
+    if (diff < 0) {
+        // Date 2 is closer than Date 1
+        return 0;
+    } else {
+        // Date 1 is closer than or equal to Date 2
+        return 1;
+    }
+}
