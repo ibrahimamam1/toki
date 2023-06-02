@@ -20,23 +20,7 @@ int displayUi(){
 }
 
 int main(int argc , char* argv[]){
-    if(argc < 2){
-        switch(displayUi()){
-            case 1:
-                todoManager();
-                break;
-            case 2:
-                // noteKeeper();
-                printf("NoteKeeper");
-                break;
-            case 3:
-                // clock();  
-                printf("Clock");
-                break;
-            default:
-                printf("Option invalid");          
-        }
-    }
+    if(argc < 2)  main_menu();
     else{
         
         if(!strcmp(toLowerCase(argv[1]),"todolist")){
@@ -55,5 +39,23 @@ int main(int argc , char* argv[]){
 
 }
 
+void main_menu(){
+    clearConsole();
+    switch(displayUi()){
+            case 1:
+                todoManager();
+                break;
+            case 2:
+                // noteKeeper();
+                printf("NoteKeeper");
+                break;
+            case 3:
+                // clock();  
+                printf("Clock");
+                break;
+            default:
+                printf("Option invalid");          
+        }
+}
 
-//TODO: Display reminder on main menu , Fix  last modification time , sort todos , add main menu to todoList
+//TODO:sort todos
