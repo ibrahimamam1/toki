@@ -3,6 +3,7 @@
 #include<string.h>
 #include"functions.h"
 #include"todo_manager.h"
+#include"notekeeper.h"
 
 
 int displayUi(){
@@ -46,8 +47,7 @@ void main_menu(){
                 todoManager();
                 break;
             case 2:
-                // noteKeeper();
-                printf("NoteKeeper");
+                noteKeeper();
                 break;
             case 3:
                 // clock();  
