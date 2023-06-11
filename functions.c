@@ -76,3 +76,16 @@ int checkReminders()
     }
     return n;
 }
+
+int compareDates(time_t date1, time_t date2)
+{
+    double diff = difftime(date1, date2);
+    
+    if (diff < 0) {
+        // Date 2 is closer than Date 1
+        return 0;
+    } else {
+        // Date 1 is closer than or equal to Date 2
+        return 1;
+    }
+}
