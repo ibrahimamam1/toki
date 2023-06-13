@@ -90,7 +90,6 @@ int readNoteFromFile(){
     }
 
     for(int i=0; i < 100 && fgets(fileName, MAX_TITLE_LENGTH, sp); i++) {
-        fgets(fileName, MAX_TITLE_LENGTH, sp);
         strtok(fileName, "\n");
         if(strlen(fileName) >= 6){
             fp = fopen(fileName, "r");
@@ -120,11 +119,15 @@ void ListNotes(Note *notes , int n){
         printf("     \tLast modified Time: %s\n\n" ,ctime(&notes[i].lastModifiedDate) );
     }
 
+    if(n>=1) printf("(Press assocated number to open note)\n");
+
     printf("Press A to add Note\n");
     if(n>=1){
-        printf("Press S to Reverse Order\n");
+        printf("Press R to Reverse Order\n");
         printf("Press D to Delete Note\n");
+        printf("Press F to Search note\n");
     }
+    printf("Press M for main menu\n");
     scanf(" %c" , &operation);
 
     switch (operation) {
@@ -139,11 +142,18 @@ void ListNotes(Note *notes , int n){
              scanf("%d" ,&noteIndex);
              deleteNote(notes, noteIndex-1, n);
              break;       
-        case 'S':
-        case 's':
+        case 'R':
+        case 'r':
             sortNotes(notes , n);
             ListNotes(notes , n);
             break; 
+        case 'F':
+        case 'f':
+            searchNotes(notes, n);  
+        case 'M':
+        case 'm':
+            main_menu();
+            break;      
          default:
                 noteIndex = operation - '0'; // Convert character to integer
                 if (noteIndex >= 1 && noteIndex <= n) displayNote(notes[noteIndex - 1]);
@@ -223,4 +233,82 @@ int deleteNote(Note* notes , int index , int len){
     fclose(fp);
     readNoteFromFile();
     return 0;
+}
+void searchNotes(Note* notes , int len){
+    int selection;
+    int found = 0;
+    Note foundNotes[len];
+    char target[MAX_TITLE_LENGTH];
+
+    printf("1)Search by tittle\n");
+    printf("2)Search by Keywords\n");
+
+    scanf("%d" , &selection);
+
+    if(selection == 1){
+        printf("Enter title\n");
+        scanf("%s" , target);
+
+        for(int i=0; i<len; i++){
+            if(strcmp(notes[i].title, target) == 0){
+                strcpy(foundNotes[found].title , notes[i].title);
+                strcpy(foundNotes[found].content , notes[i].content);
+                foundNotes[found].lastModifiedDate = notes[i].lastModifiedDate;
+                found++;
+            } 
+        }
+    }
+
+    else if (selection == 2) {
+    printf("Enter keywords\n");
+    scanf("%s", target);
+
+    for (int i = 0; i < len; i++) {
+        // Tokenize the note content into individual words
+        char* token = strtok(notes[i].content, " ");
+        while (token != NULL) {
+            // Compare each word with the target keyword
+            if (strstr(token, target) != NULL) {
+                strcpy(foundNotes[found].title, notes[i].title);
+                strcpy(foundNotes[found].content, notes[i].content);
+                foundNotes[found].lastModifiedDate = notes[i].lastModifiedDate;
+                found++;
+                break;  // Move to the next note once a match is found
+            }
+            token = strtok(NULL, " ");
+        }
+    }
+}
+    else {
+        printf("Invalid input\n");
+        ListNotes(notes , len);
+    }
+
+    ListFoundNotes(foundNotes , found);
+}
+void ListFoundNotes(Note* notes, int  n){
+    char operation;
+    int i;
+    int noteIndex;
+
+    clearConsole();
+    for(i=0; i<n; i++){
+        printf("%d -\tTITLE: %s\n",i+1,notes[i].title);
+        printf("     \tLast modified Time: %s\n\n" ,ctime(&notes[i].lastModifiedDate) );
+    }
+
+    printf("Press 0 to go back\n");
+    scanf(" %c" , &operation);
+    switch (operation) {
+        case '0':
+            readNoteFromFile();
+            break;
+        default:
+                noteIndex = operation - '0'; // Convert character to integer
+                if (noteIndex >= 1 && noteIndex <= n) displayNote(notes[noteIndex - 1]);
+                else {
+                    printf("Invalid input. Please try again.\n");
+                }
+                break;   
+    }
 }

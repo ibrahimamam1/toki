@@ -18,3 +18,5 @@ void ListNotes(Note* , int);
 void sortNotes(Note* , int len);
 void displayNote(Note);
 int deleteNote(Note* , int index, int len);
+void searchNotes(Note* , int len);
+void ListFoundNotes(Note* , int);
