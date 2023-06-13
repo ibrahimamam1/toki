@@ -16,4 +16,5 @@ int writeNoteToFile(Note note);
 int readNoteFromFile();
 void ListNotes(Note* , int);
 void sortNotes(Note* , int len);
-
+void displayNote(Note);
+int deleteNote(Note* , int index, int len);

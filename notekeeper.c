@@ -83,12 +83,13 @@ int readNoteFromFile(){
     int n_Notes = 0;
 
     sp = fopen("notes.txt", "r"); 
-    //counting number of files present i.e number of notes
+
      if (sp == NULL) {
         printf("Failed to open the file.\n");
         return 1;
     }
-    for(int i=0; !feof(sp) && i<100; i++) {
+
+    for(int i=0; i < 100 && fgets(fileName, MAX_TITLE_LENGTH, sp); i++) {
         fgets(fileName, MAX_TITLE_LENGTH, sp);
         strtok(fileName, "\n");
         if(strlen(fileName) >= 6){
@@ -111,6 +112,7 @@ int readNoteFromFile(){
 void ListNotes(Note *notes , int n){
     char operation;
     int i;
+    int noteIndex;
 
     clearConsole();
     for(i=0; i<n; i++){
@@ -119,8 +121,9 @@ void ListNotes(Note *notes , int n){
     }
 
     printf("Press A to add Note\n");
-    if(n>1){
+    if(n>=1){
         printf("Press S to Reverse Order\n");
+        printf("Press D to Delete Note\n");
     }
     scanf(" %c" , &operation);
 
@@ -130,11 +133,24 @@ void ListNotes(Note *notes , int n){
             addNote();
             readNoteFromFile();
             break;
+        case 'D':
+        case 'd':
+             printf("\nWhich note do you want to delete?\n");
+             scanf("%d" ,&noteIndex);
+             deleteNote(notes, noteIndex-1, n);
+             break;       
         case 'S':
         case 's':
             sortNotes(notes , n);
             ListNotes(notes , n);
-            break;    
+            break; 
+         default:
+                noteIndex = operation - '0'; // Convert character to integer
+                if (noteIndex >= 1 && noteIndex <= n) displayNote(notes[noteIndex - 1]);
+                else {
+                    printf("Invalid input. Please try again.\n");
+                }
+                break;       
     }
 }
 
@@ -154,4 +170,57 @@ void sortNotes(Note* notes, int len){
         end--;
     }
     
+}
+
+void displayNote(Note note ){
+    int operation;
+    clearConsole();
+    printf("\t\t\tPress 1 to edit\n");
+    printf("\t\t\tPress 2 to Go back\n\n");
+    printf("%s" , note.content);
+    printf("\n\n");
+
+    scanf("%d" , &operation);
+    if (operation == 1) {
+        clearConsole();
+        printf("Sorry not available yet!!!\n");
+        //TODO: Implement feature
+    }
+    else if (operation == 2) {
+        clearConsole();
+        readNoteFromFile();
+    }
+}
+
+int deleteNote(Note* notes , int index , int len){
+    //1) Delete note file
+    char fileName[MAX_TITLE_LENGTH];
+    char buffer[MAX_TITLE_LENGTH];
+
+    strcpy(fileName, "notes/");
+    strcat(fileName, notes[index].title);
+    strcat(fileName, ".txt");
+
+     if (remove(fileName) != 0) {
+        printf("Error deleting the note file.\n");
+        return -1;
+    }
+
+    //2) Remove note from notes array
+    for(int i = index; i < len-1 ; i++){
+        notes[i] = notes[i+1];
+    }
+    len--;
+    
+    //3)Remove notes paths from notes.txt
+    FILE* fp = fopen("notes.txt", "w");
+    for(int i = 0; i<len; i++){
+        strcpy(fileName, "notes/");
+        strcat(fileName, notes[i].title);
+        strcat(fileName, ".txt");
+        fprintf(fp, "%s\n" , fileName);//writing path to note in seperate file
+    }
+    fclose(fp);
+    readNoteFromFile();
+    return 0;
 }
