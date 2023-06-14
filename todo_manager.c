@@ -25,7 +25,7 @@ void readTodo(Todos* todo){
         if(fgetc(fp)=='\n')
             nlines++;
     }
-    nTodos = nlines/4;
+    nTodos = nlines/5;
     todo = (Todos*)malloc(nTodos*sizeof(Todos));
     
     //read Todos
@@ -36,6 +36,7 @@ void readTodo(Todos* todo){
         fgets(todo[i].description , 1000, fp);
         strtok(todo[i].description , "\n");
         fscanf(fp,"%d",&todo[i].priority);
+        fscanf(fp,"%d",&todo[i].reminder);
         fscanf(fp,"%lu",&todo[i].modifiedTime);
         fseek(fp,1,SEEK_CUR);
         i++;
@@ -45,16 +46,18 @@ void readTodo(Todos* todo){
     displayTodo(todo);
 }
 void displayTodo(Todos *todo){
-
+    int sortMode;
     char action;
     system("clear");
     listTodos(todo);
     printf("Press A to add a Todo\n");
     if(nTodos>0){
-        printf("Press R to set a reminder\n");
+        printf("Press R to set/remove a reminder\n");
         printf("Press V to delete a Todo\n");
+        printf("Press S to sort  Todos\n");
     }
-        
+    printf("Press M to go to main menu\n");    
+
     scanf(" %c",&action);
     getchar();
     switch(action){
@@ -66,7 +69,18 @@ void displayTodo(Todos *todo){
                   break;
         case 'R':          
         case 'r': setReminder(todo);
-                  break;                        
+                  break; 
+        case 'S':          
+        case 's': 
+                    printf("1) Sort by Priority\n");
+                    printf("2) Sort by Date\n");
+                    scanf("%d", &sortMode);
+                    if(sortMode == 1 ) sortTodos(todo , nTodos , 0 );
+                    else if (sortMode == 2) sortTodos(todo, nTodos, 1);
+                    break;            
+        case 'M':          
+        case 'm': main_menu();
+                  break;                       
         default : printf("Invalid Command");          
     }
 }
@@ -93,7 +107,7 @@ void addTodo(Todos *todo , int n){
     printf("priority(1-5): ");
     scanf("%d" ,&todo[n-1].priority);
     setModifiedTime(&todo[n-1].modifiedTime);
-    fprintf(fp,"%s\n%s\n%d\n%lu\n",todo[n-1].title,todo[n-1].description,todo[n-1].priority,todo[n-1].modifiedTime);
+    fprintf(fp,"%s\n%s\n%d\n%d\n%lu\n",todo[n-1].title,todo[n-1].description,todo[n-1].priority,todo[n-1].reminder,todo[n-1].modifiedTime);
     fclose(fp);
     system("clear");
     displayTodo(todo);
@@ -131,12 +145,52 @@ void deleteTodo(Todos *todo){
 }
 
 void setReminder(Todos *todo){
-    printf("Sorry not available yet\n");
-    // int n;
-    // system("clear");
-    // listTodos(todo);
-    // printf("Select todo to create reminder\n");
-    // scanf("%d", &n);
-    // printf("")
+    int n;
+    FILE* fp = fopen("todo.txt","w");
+    clearConsole();
+    listTodos(todo);
+    printf("Select todo to create/remove reminder\n");
+    scanf("%d", &n);
+
+    if(todo[n-1].reminder == 1){
+        todo[n-1].reminder = 0;
+        printf("Reminder removed succesfully\n\n");
+    } 
+    else{
+        todo[n-1].reminder = 1;
+        printf("Reminder set succesfully\n\n");
+    } 
+    sleepOneSecond();
+
+    
+     //write modification in file
+        for(int i=0;i<nTodos;i++){
+            fprintf(fp,"%s\n%s\n%d\n%d\n%lu\n",todo[i].title,todo[i].description,todo[i].priority,todo[i].reminder,todo[i].modifiedTime);
+        }
+        fclose(fp);
+      
+    
+    clearConsole();  
     displayTodo(todo);
-}    
+}   
+
+void sortTodos(Todos* todo, int length, int mode)
+{
+    for (int i = 0; i < length - 1; i++)
+    {
+        for (int j = 0; j < length - i - 1; j++)
+        {
+            if ( (mode == 0 && todo[j].priority < todo[j + 1].priority) ||
+                (mode == 1 && compareDates(todo[j].modifiedTime, todo[j + 1].modifiedTime)) )
+            {
+                // Swap todo[j] and todo[j+1]
+                Todos temp = todo[j];
+                todo[j] = todo[j + 1];
+                todo[j + 1] = temp;
+            }
+        }
+    }
+    displayTodo(todo);
+}
+
+

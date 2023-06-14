@@ -3,10 +3,15 @@
 #include<string.h>
 #include"functions.h"
 #include"todo_manager.h"
+#include"notekeeper.h"
 
 
 int displayUi(){
     int page;
+    int reminders = checkReminders();
+
+	if (reminders) printf("--You have %d todos(check TodoList)\n\n\n" , reminders );
+
     printf("\t\tWelcome\n\n");
     printf("1) TodoList\n");
     printf("2) NoteKeeper\n");
@@ -16,23 +21,7 @@ int displayUi(){
 }
 
 int main(int argc , char* argv[]){
-    if(argc < 2){
-        switch(displayUi()){
-            case 1:
-                todoManager();
-                break;
-            case 2:
-                // noteKeeper();
-                printf("NoteKeeper");
-                break;
-            case 3:
-                // clock();  
-                printf("Clock");
-                break;
-            default:
-                printf("Option invalid");          
-        }
-    }
+    if(argc < 2)  main_menu();
     else{
         
         if(!strcmp(toLowerCase(argv[1]),"todolist")){
@@ -51,4 +40,22 @@ int main(int argc , char* argv[]){
 
 }
 
+void main_menu(){
+    clearConsole();
+    switch(displayUi()){
+            case 1:
+                todoManager();
+                break;
+            case 2:
+                noteKeeper();
+                break;
+            case 3:
+                // clock();  
+                printf("Clock");
+                break;
+            default:
+                printf("Option invalid");          
+        }
+}
 
+//TODO : Notekeeper
