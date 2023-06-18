@@ -4,6 +4,7 @@
 #include"functions.h"
 #include"todo_manager.h"
 #include"notekeeper.h"
+#include "pomodoro.h"
 
 
 int displayUi(){
@@ -50,12 +51,9 @@ void main_menu(){
                 noteKeeper();
                 break;
             case 3:
-                // clock();  
-                printf("Clock");
+                pomodoro();
                 break;
             default:
                 printf("Option invalid");          
         }
 }
-
-//TODO : Notekeeper
