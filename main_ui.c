@@ -35,7 +35,7 @@ int main(int argc , char* argv[]){
         }
         else if(!strcmp(toLowerCase(argv[1]),"clock" )){
             //clock();
-            printf("clock");
+            printf("Pomodoro Timer");
         }
     }
 
